@@ -39,7 +39,7 @@ bool CreatureEventAIHolder::UpdateRepeatTimer(Creature* creature, uint32 repeatM
         Time = urand(repeatMin, repeatMax);
     else
     {
-        sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u (Type = %u) has RandomMax < RandomMin. Event repeating disabled.", creature->GetEntry(), Event.event_id, Event.event_type);
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u (Type = %u) has RandomMax < RandomMin. Event repeating disabled.", creature->GetEntry(), Event.event_id, Event.event_type);
         Enabled = false;
         return false;
     }
@@ -83,11 +83,10 @@ CreatureEventAI::CreatureEventAI(Creature* c) : BasicAI(c)
         }
     }
     else
-        sLog.Out(LOG_BASIC, LOG_LVL_ERROR, "CreatureEventAI: EventMap for Creature %u is empty but creature is using CreatureEventAI.", m_creature->GetEntry());
+        sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "CreatureEventAI: EventMap for Creature %u is empty but creature is using CreatureEventAI.", m_creature->GetEntry());
 
     m_bEmptyList = m_CreatureEventAIList.empty();
     m_Phase = 0;
-    m_InvinceabilityHpLevel = 0;
 
     //Handle Spawned Events
     c->SetAI(this);
@@ -390,7 +389,7 @@ bool CreatureEventAI::ProcessEvent(CreatureEventAIHolder& pHolder, SpellCaster* 
         }
         default:
         {
-            sLog.Out(LOG_DBERROR, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_MINIMAL, "CreatureEventAI: Creature %u using Event %u has invalid Event Type(%u), missing from ProcessEvent() Switch.", m_creature->GetEntry(), pHolder.Event.event_id, pHolder.Event.event_type);
             break;
         }
     }
@@ -832,11 +831,6 @@ void CreatureEventAI::UpdateEventsOn_UpdateAI(uint32 const diff, bool Combat)
     }
 }
 
-void CreatureEventAI::SetInvincibilityHealthLevel(uint32 hp_level, bool is_percent)
-{
-    m_InvinceabilityHpLevel = is_percent ? m_creature->GetMaxHealth() * hp_level / 100 : hp_level;
-}
-
 //*********************************
 //*** Functions used globally ***
 
@@ -854,17 +848,6 @@ void CreatureEventAI::ReceiveEmote(Player* pPlayer, uint32 text_emote)
 
             ProcessEvent(itr, pPlayer);
         }
-    }
-}
-
-void CreatureEventAI::DamageTaken(Unit* /*done_by*/, uint32& damage)
-{
-    if (m_InvinceabilityHpLevel > 0 && m_creature->GetHealth() < m_InvinceabilityHpLevel + damage)
-    {
-        if (m_creature->GetHealth() <= m_InvinceabilityHpLevel)
-            damage = 0;
-        else
-            damage = m_creature->GetHealth() - m_InvinceabilityHpLevel;
     }
 }
 

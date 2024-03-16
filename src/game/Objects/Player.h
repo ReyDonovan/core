@@ -496,7 +496,7 @@ enum AtLoginFlags
 
 enum PlayerCheatOptions : uint16
 {
-    PLAYER_CHEAT_GOD               = 0x001,
+    PLAYER_CHEAT_FLY               = 0x001,
     PLAYER_CHEAT_NO_COOLDOWN       = 0x002,
     PLAYER_CHEAT_NO_CAST_TIME      = 0x004,
     PLAYER_CHEAT_NO_POWER          = 0x008,
@@ -973,7 +973,7 @@ class Player final: public Unit
         // Initializes a new Player object that was not loaded from the database.
         bool Create(uint32 guidlow, std::string const& name, uint8 race, uint8 class_, uint8 gender, uint8 skin, uint8 face, uint8 hairStyle, uint8 hairColor, uint8 facialHair);
         void Update(uint32 update_diff, uint32 time) override;
-        static bool BuildEnumData(QueryResult* result,  WorldPacket* p_data);
+        static bool BuildEnumData(QueryResult* result,  WorldPacket* pData);
 
         /**
          * @brief Can only be called from Master server (or ASSERT will fail)
@@ -1019,8 +1019,8 @@ class Player final: public Unit
         bool IsGMVisible() const { return !(m_ExtraFlags & PLAYER_EXTRA_GM_INVISIBLE); }
         void SetGMVisible(bool on, bool notify = false);
         
+        void SetCheatFly(bool on, bool notify = false);
         void SetCheatGod(bool on, bool notify = false);
-        bool IsGod() const { return HasCheatOption(PLAYER_CHEAT_GOD); }
         void SetCheatNoCooldown(bool on, bool notify = false);
         void SetCheatInstantCast(bool on, bool notify = false);
         void SetCheatNoPowerCost(bool on, bool notify = false);
