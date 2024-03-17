@@ -21,7 +21,6 @@
 #include "Util.h"
 #include "MoveSplineInit.h"
 #include "MoveSpline.h"
-#include "World.h"
 
 #define MAX_RANDOM_POINTS 10
 
